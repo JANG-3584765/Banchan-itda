@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반찬잇다 - 우리 동네 반찬 찾기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="logo">반찬잇다</h1>
+        <div class="search-container">
+            <input type="text" placeholder="동네 이름이나 반찬 가게를 검색해보세요">
+            <button type="button">🔍</button>
+        </div>
+        <nav class="nav-menu">
+            <a href="#">로그인</a>
+            <a href="#">찜 목록</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        
+        <aside class="sidebar">
+            <section class="filter-section">
+                <button class="filter-tag">#저염식</button>
+                <button class="filter-tag">#아이반찬</button>
+                <button class="filter-tag">#자취생소분</button>
+            </section>
+            
+            <div class="shop-list">
+                <article class="shop-card">
+                    <div class="shop-card__image"></div>
+                    <div class="shop-card__info">
+                        <h3>엄마손 반찬가게</h3>
+                        <p>⭐️ 4.5 (리뷰 120)</p>
+                        <p>#중랑구 #망우동</p>
+                    </div>
+                </article>
+                </div>
+        </aside>
+
+        <section id="map-container">
+            <div id="map" style="width:100%; height:100%; background-color: #e5e5e5; display: flex; align-items: center; justify-content: center;">
+                <p>지도가 로드될 영역입니다.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 반찬잇다. All rights reserved.</p>
+    </footer>
+</body>
+</html>

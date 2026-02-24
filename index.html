@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>반찬잇다 - 우리 동네 반찬 찾기</title>
-    <link rel="stylesheet" href="style.css">
+    <title>반찬잇다 - 우리 동네 반찬 찾기</title> <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <header class="header">
+<body> <header class="header">
         <h1 class="logo">반찬잇다</h1>
         <div class="search-container">
             <input type="text" placeholder="동네 이름이나 반찬 가게를 검색해보세요">
@@ -20,7 +18,6 @@
     </header>
 
     <main class="main-container">
-        
         <aside class="sidebar">
             <section class="filter-section">
                 <button class="filter-tag">#저염식</button>
@@ -34,10 +31,10 @@
                     <div class="shop-card__info">
                         <h3>엄마손 반찬가게</h3>
                         <p>⭐️ 4.5 (리뷰 120)</p>
-                        <p>#중랑구 #망우동</p>
+                        <p>#중랑구 #상봉동</p>
                     </div>
                 </article>
-                </div>
+            </div>
         </aside>
 
         <section id="map-container">
@@ -45,11 +42,31 @@
                 <p>지도가 로드될 영역입니다.</p>
             </div>
         </section>
-
     </main>
 
     <footer class="footer">
         <p>&copy; 2026 반찬잇다. All rights reserved.</p>
     </footer>
+
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1018b180a2f2cd1e1b559ae3d503375f&autoload=false"></script>
+    <script>
+    // script.js로 넘어가기 전에 여기서 직접 테스트해봅니다.
+    // 만약 여기서도 에러가 나면 100% 도메인/키 설정 문제입니다.
+    window.onload = function() {
+        if (typeof kakao !== 'undefined') {
+            kakao.maps.load(function() {
+                var container = document.getElementById('map');
+                var options = {
+                    center: new kakao.maps.LatLng(37.5936, 127.0903),
+                    level: 3
+                };
+                var map = new kakao.maps.Map(container, options);
+                console.log("성공: 지도가 생성되었습니다!");
+            });
+        } else {
+            console.error("실패: 여전히 kakao 객체를 찾을 수 없습니다. 도메인 설정을 다시 확인하세요.");
+        }
+    };
+</script>
 </body>
 </html>

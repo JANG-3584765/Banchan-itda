@@ -3,70 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>반찬잇다 - 우리 동네 반찬 찾기</title> <link rel="stylesheet" href="style.css">
+    <title>찬차니 - 우리 동네 반찬 찾기</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
 </head>
-<body> <header class="header">
-        <h1 class="logo">반찬잇다</h1>
+<body>
+    <header class="header">
+        <h1 class="logo">찬차니</h1>
         <div class="search-container">
-            <input type="text" placeholder="동네 이름이나 반찬 가게를 검색해보세요">
-            <button type="button">🔍</button>
+            <div class="search-wrapper">
+                <input type="text" placeholder="동네 이름이나 반찬 가게 검색">
+                <button type="button" class="search-btn">🔍</button>
+            </div>
         </div>
         <nav class="nav-menu">
-            <a href="#">로그인</a>
-            <a href="#">찜 목록</a>
+            <a href="#" class="nav-item">로그인</a>
+            <a href="#" class="nav-item">찜 목록 <span class="wish-count">0</span></a>
         </nav>
     </header>
 
     <main class="main-container">
         <aside class="sidebar">
             <section class="filter-section">
+                <button class="filter-tag active">#전체</button>
                 <button class="filter-tag">#저염식</button>
                 <button class="filter-tag">#아이반찬</button>
                 <button class="filter-tag">#자취생소분</button>
             </section>
             
+            <div class="list-header">
+                <span class="total-count">주변 가게 <strong>3</strong>곳</span>
+                <select class="sort-select">
+                    <option>추천순</option>
+                    <option>거리순</option>
+                    <option>리뷰순</option>
+                </select>
+            </div>
+
             <div class="shop-list">
                 <article class="shop-card">
-                    <div class="shop-card__image"></div>
+                    <div class="shop-card__img-box">
+                        <div class="badge status-open">영업중</div>
+                        <div class="shop-card__image"></div>
+                    </div>
                     <div class="shop-card__info">
-                        <h3>엄마손 반찬가게</h3>
-                        <p>⭐️ 4.5 (리뷰 120)</p>
-                        <p>#중랑구 #상봉동</p>
+                        <div class="shop-card__title">
+                            <h3>엄마손 반찬가게</h3>
+                            <span class="distance">350m</span>
+                        </div>
+                        <div class="shop-card__rating">
+                            <span class="star">⭐</span>
+                            <span class="score">4.5</span>
+                            <span class="review">(120)</span>
+                        </div>
+                        <p class="shop-card__tags">#중랑구 #상봉동 #당일제조</p>
+                        <p class="shop-card__desc">"조미료를 쓰지 않는 깔끔한 맛!"</p>
+                    </div>
+                </article>
+
+                <article class="shop-card">
+                    <div class="shop-card__img-box">
+                        <div class="badge status-new">NEW</div>
+                        <div class="shop-card__image"></div>
+                    </div>
+                    <div class="shop-card__info">
+                        <div class="shop-card__title">
+                            <h3>사임당 반찬</h3>
+                            <span class="distance">800m</span>
+                        </div>
+                        <div class="shop-card__rating">
+                            <span class="star">⭐</span>
+                            <span class="score">4.8</span>
+                            <span class="review">(85)</span>
+                        </div>
+                        <p class="shop-card__tags">#중화동 #나물맛집 #집밥감성</p>
+                        <p class="shop-card__desc">"오늘의 나물 라인업이 다양해요."</p>
                     </div>
                 </article>
             </div>
         </aside>
 
         <section id="map-container">
-            <div id="map" style="width:100%; height:100%; background-color: #e5e5e5; display: flex; align-items: center; justify-content: center;">
-                <p>지도가 로드될 영역입니다.</p>
+            <div id="map">
+                <div class="map-placeholder">
+                    <p>지도를 불러오는 중입니다...</p>
+                </div>
             </div>
+            <button class="btn-current-loc">내 위치로</button>
         </section>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 반찬잇다. All rights reserved.</p>
+        <p>&copy; 2026 찬차니. All rights reserved.</p>
     </footer>
 
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=1018b180a2f2cd1e1b559ae3d503375f&autoload=false"></script>
-    <script>
-    // script.js로 넘어가기 전에 여기서 직접 테스트해봅니다.
-    // 만약 여기서도 에러가 나면 100% 도메인/키 설정 문제입니다.
-    window.onload = function() {
-        if (typeof kakao !== 'undefined') {
-            kakao.maps.load(function() {
-                var container = document.getElementById('map');
-                var options = {
-                    center: new kakao.maps.LatLng(37.5936, 127.0903),
-                    level: 3
-                };
-                var map = new kakao.maps.Map(container, options);
-                console.log("성공: 지도가 생성되었습니다!");
-            });
-        } else {
-            console.error("실패: 여전히 kakao 객체를 찾을 수 없습니다. 도메인 설정을 다시 확인하세요.");
-        }
-    };
-</script>
+    <script src="script.js"></script>
 </body>
 </html>

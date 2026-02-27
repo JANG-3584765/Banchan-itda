@@ -1,11 +1,51 @@
 window.onload = function() {
+    // 1. 카카오 SDK 초기화 (로그인 기능을 위해 필수)
+    // 지도 API 키와 동일한 JavaScript 키를 사용합니다.
+    if (!Kakao.isInitialized()) {
+        Kakao.init('1018b180a2f2cd1e1b559ae3d503375f');
+    }
+
+    // --- 카카오 로그인 함수 ---
+    function loginWithKakao() {
+        Kakao.Auth.login({
+            success: function(authObj) {
+                console.log("로그인 성공!", authObj);
+                // 로그인 성공 시 사용자 정보 가져오기
+                Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: function(res) {
+                        const nickname = res.kakao_account.profile.nickname;
+                        alert(nickname + "님, 반찬잇다에 오신 것을 환영합니다!");
+                        // 로그인 버튼 텍스트를 사용자 이름으로 변경하거나 UI 업데이트 가능
+                        document.querySelector('.nav-menu a').innerText = nickname + "님";
+                    },
+                    fail: function(error) {
+                        console.error("사용자 정보 요청 실패", error);
+                    }
+                });
+            },
+            fail: function(err) {
+                console.error("로그인 실패", err);
+            },
+        });
+    }
+
+    // 헤더의 '로그인' 버튼에 이벤트 연결
+    const loginBtn = document.querySelector('.nav-menu a:first-child');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // 링크 기본 동작 방지
+            loginWithKakao();
+        });
+    }
+
+    // --- 기존 지도 및 데이터 로직 시작 ---
     if (typeof kakao === 'undefined') {
         console.error("카카오 지도 라이브러리가 로드되지 않았습니다.");
         return;
     }
 
     kakao.maps.load(function() {
-        // --- 1. 데이터 정의 (나중에 서버에서 받아올 실제 데이터 예시) ---
         const stores = [
             {
                 id: 1,
@@ -48,7 +88,6 @@ window.onload = function() {
             }
         ];
 
-        // --- 2. 지도 초기화 ---
         const container = document.getElementById('map'); 
         const options = {
             center: new kakao.maps.LatLng(37.5936, 127.0903), 
@@ -56,16 +95,13 @@ window.onload = function() {
         };
         const map = new kakao.maps.Map(container, options);
 
-        // --- 3. 리스트 동적 생성 및 마커 표시 ---
         const shopListContainer = document.querySelector('.shop-list');
-        shopListContainer.innerHTML = ''; // 기존 HTML에 써둔 샘플 태그 비우기
+        shopListContainer.innerHTML = '';
 
         stores.forEach(store => {
-            // (1) 사이드바 카드 HTML 생성
             const shopCard = document.createElement('article');
             shopCard.className = 'shop-card';
             
-            // 영업 상태에 따른 배지 설정
             const badgeClass = store.status === 'open' ? 'status-open' : 'status-new';
             const badgeText = store.status === 'open' ? '영업중' : 'NEW';
 
@@ -89,20 +125,17 @@ window.onload = function() {
                 </div>
             `;
             
-            // 리스트에 추가
             shopListContainer.appendChild(shopCard);
 
-            // (2) 지도에 마커 표시
             const marker = new kakao.maps.Marker({
                 position: new kakao.maps.LatLng(store.lat, store.lng),
                 map: map,
                 title: store.name
             });
 
-            // (3) 카드 클릭 시 지도로 이동하는 이벤트 추가
             shopCard.addEventListener('click', () => {
                 const moveLatLon = new kakao.maps.LatLng(store.lat, store.lng);
-                map.panTo(moveLatLon); // 부드럽게 이동
+                map.panTo(moveLatLon);
             });
         });
         

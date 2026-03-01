@@ -1,8 +1,14 @@
 window.onload = function() {
-    // 1. 카카오 SDK 초기화
+    // Kakao SDK가 정상적으로 로드되었는지 먼저 확인
+    if (typeof Kakao === 'undefined') {
+        console.error("카카오 SDK 로드 실패! index.html의 스크립트 경로를 확인하세요.");
+        return; 
+    }
+
     if (!Kakao.isInitialized()) {
         Kakao.init('1018b180a2f2cd1e1b559ae3d503375f');
     }
+    // ... 이후 동일
 
     // 전역 상태 관리
     let wishList = [];

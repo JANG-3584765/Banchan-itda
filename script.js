@@ -9,8 +9,8 @@ window.onload = function() {
     // 전역 상태 관리
     let wishList = [];
     let isLoggedIn = false;
-    let markers = []; // 마커 관리를 위한 배열 추가
-    let currentMap = null; // 지도 객체 전역 참조용
+    let markers = []; 
+    let currentMap = null; 
 
     // --- [데이터] 가게 정보 ---
     const stores = [
@@ -19,25 +19,22 @@ window.onload = function() {
         { id: 3, name: "맛있는 반찬가게", rating: 4.2, reviews: 50, tags: ["#자취생소분", "#매콤맛집"], desc: "1인 가구를 위한 소분 반찬 전문!", lat: 37.5897, lng: 127.0915, distance: "1.2km", status: "open" }
     ];
 
-    // --- [공통 함수] 리스트 및 마커 렌더링 (필터링의 핵심) ---
+    // --- [공통 함수] 리스트 및 마커 렌더링 ---
     function renderStores(filterTag = 'all') {
         const shopListContainer = document.getElementById('shop-list-container');
-        shopListContainer.innerHTML = ''; // 기존 리스트 삭제
-
-        // 기존 마커들 지도에서 제거
+        if (!shopListContainer) return;
+        
+        shopListContainer.innerHTML = ''; 
         markers.forEach(marker => marker.setMap(null));
         markers = [];
 
-        // 데이터 필터링
         const filteredStores = filterTag === 'all' 
             ? stores 
             : stores.filter(s => s.tags.some(tag => tag.includes(filterTag)));
 
-        // 상단 개수 업데이트
         document.getElementById('store-num').innerText = filteredStores.length;
 
         filteredStores.forEach(store => {
-            // 1. 카드 생성
             const shopCard = document.createElement('article');
             shopCard.className = 'shop-card';
             const badgeClass = store.status === 'open' ? 'status-open' : 'status-new';
@@ -61,7 +58,6 @@ window.onload = function() {
             
             shopListContainer.appendChild(shopCard);
 
-            // 2. 마커 생성 및 지도 표시
             const marker = new kakao.maps.Marker({
                 position: new kakao.maps.LatLng(store.lat, store.lng),
                 map: currentMap,
@@ -69,16 +65,14 @@ window.onload = function() {
             });
             markers.push(marker);
 
-            // 3. 카드 클릭 시 지도 이동 이벤트
             shopCard.addEventListener('click', (e) => {
                 if(e.target.classList.contains('btn-wish')) return;
                 currentMap.panTo(new kakao.maps.LatLng(store.lat, store.lng));
             });
 
-            // 4. 찜하기 클릭 이벤트
             const wishBtn = shopCard.querySelector('.btn-wish');
             wishBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // 카드 클릭 이벤트 전파 방지
+                e.stopPropagation(); 
                 if (!isLoggedIn) {
                     alert("로그인 후 이용 가능합니다.");
                     loginWithKakao();
@@ -99,7 +93,7 @@ window.onload = function() {
         });
     }
 
-    // --- [기능 1] 로그인 관련 (기존과 동일) ---
+    // --- [기능 1] 로그인 관련 ---
     function loginWithKakao() {
         Kakao.Auth.login({
             success: function() { fetchUserInfo(); },
@@ -113,12 +107,19 @@ window.onload = function() {
             success: function(res) {
                 isLoggedIn = true;
                 document.getElementById('kakao-login-btn').innerText = res.kakao_account.profile.nickname + "님";
-                alert("반갑습니다!");
             }
         });
     }
 
-    // --- [기능 2] 지도 및 검색 로직 ---
+    const loginBtn = document.getElementById('kakao-login-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!isLoggedIn) loginWithKakao();
+        });
+    }
+
+    // --- [기능 2] 지도 초기화 및 검색 ---
     if (typeof kakao === 'undefined') return;
 
     kakao.maps.load(function() {
@@ -130,10 +131,8 @@ window.onload = function() {
         
         const geocoder = new kakao.maps.services.Geocoder();
 
-        // 초기 화면 렌더링
         renderStores('all');
 
-        // 주소 검색 설정
         window.openAddressSearch = function() {
             new daum.Postcode({
                 oncomplete: function(data) {
@@ -150,17 +149,48 @@ window.onload = function() {
 
         const searchInput = document.getElementById('shop-search');
         if (searchInput) searchInput.addEventListener('click', openAddressSearch);
+
+        // --- [기능 5] 내 위치 찾기 추가 ---
+        const locBtn = document.querySelector('.btn-current-loc');
+        if (locBtn) {
+            locBtn.addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    // 로딩 표시 (선택사항)
+                    locBtn.innerText = "찾는 중...";
+                    
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const locPosition = new kakao.maps.LatLng(lat, lon);
+                        
+                        // 현재 위치로 지도 이동
+                        currentMap.panTo(locPosition);
+                        
+                        // 현재 위치 마커 표시 (파란색 등 다른 커스텀 가능)
+                        new kakao.maps.Marker({
+                            map: currentMap,
+                            position: locPosition,
+                            title: "내 현재 위치"
+                        });
+                        
+                        locBtn.innerText = "내 위치로";
+                    }, (err) => {
+                        alert("위치 정보를 가져올 수 없습니다.");
+                        locBtn.innerText = "내 위치로";
+                    });
+                } else {
+                    alert("이 브라우저에서는 GPS 기능을 사용할 수 없습니다.");
+                }
+            });
+        }
     });
 
-    // --- [기능 4] 필터 태그 클릭 이벤트 추가 ---
+    // --- [기능 4] 필터 태그 클릭 ---
     const filterButtons = document.querySelectorAll('.filter-tag');
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 버튼 활성화 스타일 변경
             filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // 데이터 필터링 실행
             const filterValue = btn.getAttribute('data-filter');
             renderStores(filterValue);
         });
